@@ -98,6 +98,50 @@ python -m app.main
 
 Pressione `Ctrl+C` para encerrar o aplicativo graciosamente.
 
+## 📁 Localização dos Arquivos
+
+### Modo Desenvolvimento (Python)
+
+Quando executado diretamente pelo Python, os arquivos são salvos no diretório do projeto:
+
+```
+[projeto]/recordings/recording_YYYYMMDD_HHMMSS.wav
+[projeto]/logs/voice_recorder_YYYYMMDD.log
+```
+
+### Modo Executável (.exe)
+
+**⚠️ IMPORTANTE**: Quando executado como `.exe`, os arquivos são salvos em `AppData\Roaming\VoiceRecorder\` para garantir permissões de escrita, mesmo se o executável estiver em pasta protegida (como Startup).
+
+**Localização padrão:**
+```
+C:\Users\[SEU_USUARIO]\AppData\Roaming\VoiceRecorder\
+├── recordings\          ← Gravações aqui
+│   └── recording_YYYYMMDD_HHMMSS.wav
+└── logs\                ← Logs aqui
+    └── voice_recorder_YYYYMMDD.log
+```
+
+**Por que AppData?**
+- ✅ Sempre tem permissões de escrita garantidas
+- ✅ Funciona mesmo se o executável estiver em pasta protegida (Startup, Program Files, etc.)
+- ✅ Permite autostart sem problemas de permissão
+- ✅ Local padrão do Windows para dados de aplicativos
+
+**Como acessar rapidamente:**
+
+1. **Gravações:**
+   - Pressione `Win + R`
+   - Digite: `%APPDATA%\VoiceRecorder\recordings`
+   - Pressione Enter
+
+2. **Logs:**
+   - Pressione `Win + R`
+   - Digite: `%APPDATA%\VoiceRecorder\logs`
+   - Pressione Enter
+
+**Nota**: O executável pode estar em qualquer lugar (Desktop, Startup, pasta oculta, etc.), mas os arquivos sempre serão salvos em AppData.
+
 ## ⚙️ Configuração
 
 Edite `app/config.py` para ajustar:
@@ -147,8 +191,22 @@ python setup.py build
 ## 📝 Logs
 
 Os logs são salvos em:
-- Console (nível INFO)
-- Arquivo: `logs/voice_recorder_YYYYMMDD.log` (nível DEBUG)
+- **Console** (nível INFO) - apenas em modo desenvolvimento
+- **Arquivo** (nível DEBUG):
+  - Modo desenvolvimento: `logs/voice_recorder_YYYYMMDD.log`
+  - Modo executável: `C:\Users\[USUARIO]\AppData\Roaming\VoiceRecorder\logs\voice_recorder_YYYYMMDD.log`
+
+**Formato dos logs:**
+```
+YYYY-MM-DD HH:MM:SS - module - LEVEL - mensagem
+```
+
+Os logs contêm informações detalhadas sobre:
+- Inicialização do sistema
+- Detecção de voz
+- Início e fim de gravações
+- Caminhos completos dos arquivos salvos
+- Erros e avisos
 
 ## 🔧 Troubleshooting
 
@@ -172,6 +230,20 @@ Verifique:
 Ajuste em `config.py`:
 - Aumente `VAD_AGGRESSIVENESS` (0-3)
 - Diminua `MIN_VOICE_FRAMES`
+
+### Executável não salva arquivos
+
+- Verifique se os arquivos estão sendo salvos em `AppData\Roaming\VoiceRecorder\`
+- Use `Win + R` → `%APPDATA%\VoiceRecorder\recordings` para acessar
+- Verifique permissões de escrita em AppData
+- Verifique logs em `%APPDATA%\VoiceRecorder\logs\` para erros
+
+### Autostart não funciona
+
+- Certifique-se que o executável está na pasta Startup
+- Verifique se não há problemas de permissão (arquivos são salvos em AppData automaticamente)
+- Use o Agendador de Tarefas como alternativa (mais confiável)
+- Verifique se o Windows Defender não está bloqueando
 
 ## 📄 Licença
 

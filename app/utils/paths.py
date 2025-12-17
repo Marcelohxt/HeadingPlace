@@ -12,9 +12,16 @@ def get_project_root() -> Path:
     """Retorna o diretório raiz do projeto."""
     # Se estiver rodando como executável PyInstaller
     if getattr(sys, 'frozen', False):
-        # sys.executable aponta para o .exe
-        # O diretório do executável é onde queremos salvar os arquivos
-        return Path(sys.executable).parent
+        # Usar AppData\Roaming para garantir permissões de escrita
+        # Isso funciona mesmo quando executado da pasta Startup ou outras pastas protegidas
+        appdata_path = Path(os.getenv('APPDATA', ''))
+        if appdata_path:
+            # Criar pasta específica do app em AppData
+            app_folder = appdata_path / 'VoiceRecorder'
+            return app_folder
+        else:
+            # Fallback: usar diretório do executável
+            return Path(sys.executable).parent
     else:
         # Modo desenvolvimento: usar __file__
         return Path(__file__).parent.parent.parent
@@ -27,8 +34,21 @@ def ensure_directories():
     recordings_path = root / RECORDINGS_DIR
     logs_path = root / LOGS_DIR
     
-    recordings_path.mkdir(parents=True, exist_ok=True)
-    logs_path.mkdir(parents=True, exist_ok=True)
+    try:
+        recordings_path.mkdir(parents=True, exist_ok=True)
+        logs_path.mkdir(parents=True, exist_ok=True)
+    except PermissionError as e:
+        # Se não conseguir criar, tentar diretório do usuário como fallback
+        user_home = Path.home()
+        fallback_path = user_home / 'VoiceRecorder'
+        recordings_path = fallback_path / RECORDINGS_DIR
+        logs_path = fallback_path / LOGS_DIR
+        recordings_path.mkdir(parents=True, exist_ok=True)
+        logs_path.mkdir(parents=True, exist_ok=True)
+        root = fallback_path
+        # Log do fallback (sem importar logger aqui para evitar circular)
+        import logging
+        logging.getLogger(__name__).warning(f"Usando fallback path: {fallback_path}")
     
     return recordings_path, logs_path
 
