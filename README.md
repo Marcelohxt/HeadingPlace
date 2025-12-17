@@ -177,7 +177,7 @@ Ajuste em `config.py`:
 
 Este projeto é fornecido como está, sem garantias.
 
-## 👤 Autor
+## 👤Marcelo henrique
 
 Desenvolvido para gravação automática por detecção de voz.
 
