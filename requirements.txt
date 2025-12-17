@@ -1,0 +1,13 @@
+pyaudio>=0.2.14
+webrtcvad>=2.0.10
+numpy>=1.24.0
+sounddevice>=0.4.6
+numpy>=1.24.0
+webrtcvad>=2.0.10
+soundfile>=0.12.1
+pathlib2>=2.3.7
+loguru>=0.7.2
+pywin32>=306
+pyinstaller>=6.3.0
+pytest>=7.4.0
+
